@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    MoraSoft | Posts
+    Posts page
 @endsection
 
 @section('content')
