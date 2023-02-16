@@ -21,12 +21,12 @@ class PostController extends Controller
 
     public function show($id){
 
-        // $posts = Post::find($id);
         $posts = Post::find($id);
-        if($posts){
-            return $this->apiResponse(new PostResource($posts,'ok',200));
+
+        if(!$posts){
+            return $this->apiResponse(null,'this post not found',404);
         }
-        return $this->apiResponse(null,'this post not found',404);
+        return $this->apiResponse(new PostResource($posts,'ok',200));
     }
 
     public function store(Request $request){
@@ -45,6 +45,47 @@ class PostController extends Controller
 
         if($post){
             return $this->apiResponse(new PostResource($post),'The post Save',201);
+        }
+
+    }
+
+
+    public function update(Request $request , $id){
+
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|unique:posts|max:255',
+            'body' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->apiResponse($validator->errors(),'The post Not updated',400);
+        }
+
+        $posts = Post::find($id);
+
+        if(!$posts){
+            return $this->apiResponse(null,'this post not found',404);
+        }
+        $posts->update($request->all());
+
+        return $this->apiResponse(new PostResource($posts),'The post updated',201);
+
+    }
+
+
+    public function destroy($id){
+
+        $post=Post::find($id);
+
+        if(!$post){
+            return $this->apiResponse(null,'The post Not Found',404);
+        }
+
+        $post->delete($id);
+
+        if($post){
+            return $this->apiResponse(null,'The post deleted',200);
         }
 
     }
