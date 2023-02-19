@@ -21,13 +21,14 @@ class PostController extends Controller
 
     public function show($id){
 
-        $posts = Post::find($id);
+        $post = Post::find($id);
 
-        if(!$posts){
-            return $this->apiResponse(null,'this post not found',404);
+        if($post){
+            return $this->apiResponse(new PostResource($post),'ok',200);
         }
-        return $this->apiResponse(new PostResource($posts,'ok',200));
+        return $this->apiResponse(null,'this post not found',404);
     }
+
 
     public function store(Request $request){
 
